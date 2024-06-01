@@ -19,6 +19,10 @@ dependencies {
     // compose.desktop.currentOs should be used in launcher-sourceSet
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
+
+    implementation("org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
+
     implementation(compose.desktop.currentOs)
 }
 
