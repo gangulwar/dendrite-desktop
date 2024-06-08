@@ -2,16 +2,18 @@ package data.network
 
 import data.modal.ChatMessage
 import data.modal.MessageType
+import presentation.viewmodel.User
 import java.io.*
 import java.net.ServerSocket
 import java.net.Socket
 import java.util.concurrent.CopyOnWriteArrayList
 
-class ChatServer(private val port: Int) {
+class ChatServer(private val port: Int, roomName: String) {
 
     private val clients = CopyOnWriteArrayList<ClientHandler>()
     private val serverSocket = ServerSocket(port)
-    private val roomName: String = "Room Name"
+    private val roomName: String = roomName
+    private var nameToAvatar: List<User> = emptyList()
 
     fun start() {
         println("Server started on port $port")
@@ -76,7 +78,7 @@ class ChatServer(private val port: Int) {
         private fun mapClientNameToSocket(chatMessage: ChatMessage) {
             username = chatMessage.sender
 
-            server.broadcast(ChatMessage(MessageType.JOINED, username!!, "${chatMessage.message} $roomName"), this)
+            server.broadcast(ChatMessage(MessageType.JOINED, username!!, chatMessage.message), this)
 
             sendMessage(
                 ChatMessage(
@@ -85,6 +87,22 @@ class ChatServer(private val port: Int) {
                     server.roomName
                 ).toBytes()
             )
+
+            nameToAvatar += User(
+                username!!,
+                chatMessage.message
+            )
+
+            nameToAvatar.forEachIndexed { _, user ->
+                sendMessage(
+                    ChatMessage(
+                        MessageType.JOINED,
+                        user.name,
+                        user.avatar
+                    ).toBytes()
+                )
+            }
+
             //            ClientInfo(name, avatarNumber)
 //
 //

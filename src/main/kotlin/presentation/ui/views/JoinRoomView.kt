@@ -18,11 +18,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -33,8 +29,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent
+import presentation.ui.nav.Screens
+import presentation.viewmodel.ChatViewModel
 import utils.Colors
+import utils.CurrentUser
 import utils.Fonts
+import utils.ViewModelProvider
 
 @Composable
 fun JoinRoomView(
@@ -44,6 +47,8 @@ fun JoinRoomView(
     var roomID by remember {
         mutableStateOf("")
     }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -118,7 +123,14 @@ fun JoinRoomView(
             modifier = Modifier
                 .padding(bottom = 15.dp),
             onClick = {
+                CurrentUser.name="Aarsh"
+                CurrentUser.roomName="Room"
+                coroutineScope.launch(Dispatchers.IO) {
+                    ViewModelProvider.ChatViewModel = KoinJavaComponent.get(ChatViewModel::class.java)
+                    ViewModelProvider.ChatViewModel.setUpViewModel("localhost", 8080)
 
+                    navController.navigate(Screens.Chat.route)
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Colors.DarkBlue

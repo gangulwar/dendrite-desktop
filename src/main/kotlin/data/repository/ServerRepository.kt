@@ -1,15 +1,18 @@
 package data.repository
 
-class ServerRepository : Repository{
-    override fun onUserJoined() {
-        TODO("Not yet implemented")
-    }
+import presentation.viewmodel.Message
+import presentation.viewmodel.User
 
-    override fun onChatMessage() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onLeave() {
-        TODO("Not yet implemented")
-    }
-}
+//class ServerRepository : Repository{
+//    override fun onUserJoined(user: User) {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onChatMessage(message: Message) {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onLeave(user: User) {
+//        TODO("Not yet implemented")
+//    }
+//}

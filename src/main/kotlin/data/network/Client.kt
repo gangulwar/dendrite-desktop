@@ -2,10 +2,16 @@ package data.network
 
 import data.modal.ChatMessage
 import data.modal.MessageType
+import data.repository.Repository
+import presentation.viewmodel.Message
 import java.io.*
 import java.net.Socket
 
-class ChatClient(private val host: String, private val port: Int) {
+class ChatClient(
+    private val host: String,
+    private val port: Int,
+    private val repository: Repository
+) {
 
     private lateinit var socket: Socket
     private lateinit var input: DataInputStream
@@ -13,32 +19,35 @@ class ChatClient(private val host: String, private val port: Int) {
     private var username: String? = null
     private lateinit var ROOM_NAME: String
 
-    fun start() {
+    fun start(name: String, avatar: String) {
+        println("start() of Client")
         socket = Socket(host, port)
         input = DataInputStream(socket.getInputStream())
         output = DataOutputStream(socket.getOutputStream())
 
-        println("Connected to the server at $host:$port")
+//        println("Connected to the server at $host:$port")
+//
+//        print("Enter your name: ")
+//        username = BufferedReader(InputStreamReader(System.`in`)).readLine()
+//        val avatar = BufferedReader(InputStreamReader(System.`in`)).readLine().toInt()
+//
+//        println("Welcome, $username!")
 
-        print("Enter your name: ")
-        username = BufferedReader(InputStreamReader(System.`in`)).readLine()
-        val avatar = BufferedReader(InputStreamReader(System.`in`)).readLine().toInt()
-
-        println("Welcome, $username!")
-
+        username = name
         sendMessage("$avatar", MessageType.JOINED)
 
         Thread { receiveMessages() }.start()
 
-        val consoleReader = BufferedReader(InputStreamReader(System.`in`))
-        try {
-            var inputMessage: String?
-            while (consoleReader.readLine().also { inputMessage = it } != null) {
-                sendMessage(inputMessage!!)
-            }
-        } catch (e: Exception) {
-            println("Error reading from console")
-        }
+//        val consoleReader = BufferedReader(InputStreamReader(System.`in`))
+//        try {
+//            var inputMessage: String?
+//            while (consoleReader.readLine().also { inputMessage = it } != null) {
+//                sendMessage(inputMessage!!)
+//            }
+//        } catch (e: Exception) {
+//            println("Error reading from console")
+//        }
+
     }
 
     private fun receiveMessages() {
@@ -51,19 +60,23 @@ class ChatClient(private val host: String, private val port: Int) {
 
                 when (chatMessage.type) {
                     MessageType.CHAT -> {
-                        handelChatMessage(chatMessage) //TODO {HANDEL MESSAGE}
+                        handelChatMessage(chatMessage)
+                        repository.onChatMessage(chatMessage)
                     }
 
                     MessageType.JOINED -> {
                         handelJoinMessage(chatMessage)
+                        repository.onUserJoined(chatMessage)
                     }
 
                     MessageType.LEAVED -> {
                         handelLeaveMessage(chatMessage)
+                        repository.onLeave(chatMessage)
                     }
 
                     MessageType.ROOM_NAME -> {
                         handelRoomName(chatMessage.message)
+                        repository.onRoomNameRecieved(chatMessage)
                     }
                 }
 
@@ -77,7 +90,7 @@ class ChatClient(private val host: String, private val port: Int) {
         }
     }
 
-    private fun sendMessage(message: String, types: MessageType = MessageType.CHAT) {
+    fun sendMessage(message: String, types: MessageType = MessageType.CHAT) {
         val chatMessage: ChatMessage
         var messageBytes: ByteArray = ByteArray(0)
         when (types) {

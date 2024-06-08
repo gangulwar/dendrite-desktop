@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import presentation.ui.nav.Screens
 import utils.Colors
+import utils.CurrentUser
 import utils.Fonts
 
 @Composable
@@ -81,7 +82,6 @@ fun CreateRoomView(
                 value = roomName,
                 onValueChange = {
                     roomName = it
-
                 },
                 placeholder = {
                     Text(
@@ -120,7 +120,10 @@ fun CreateRoomView(
             modifier = Modifier
                 .padding(bottom = 15.dp),
             onClick = {
-                      navController.navigate(Screens.Profile.route)
+                if (roomName.isNotEmpty()) {
+                    CurrentUser.roomName = roomName
+                    navController.navigate(Screens.Profile.route)
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Colors.DarkBlue
@@ -128,7 +131,7 @@ fun CreateRoomView(
             shape = RoundedCornerShape(23.dp)
         ) {
             Text(
-                modifier = Modifier.padding(start = 50.dp, end = 50.dp, top=5.dp, bottom = 5.dp),
+                modifier = Modifier.padding(start = 50.dp, end = 50.dp, top = 5.dp, bottom = 5.dp),
                 text = "Create", style = TextStyle(
                     fontFamily = Fonts.InterFontFamily,
                     fontSize = 30.sp,
@@ -165,7 +168,7 @@ fun CreateRoomView(
                 .padding(bottom = 15.dp)
                 .border(1.dp, Colors.DarkBlue, RoundedCornerShape(23.dp)),
             onClick = {
-                      onJoinRoomButtonClick()
+                onJoinRoomButtonClick()
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.White
@@ -173,7 +176,7 @@ fun CreateRoomView(
             shape = RoundedCornerShape(23.dp)
         ) {
             Text(
-                modifier = Modifier.padding(start = 50.dp, end = 50.dp, top=5.dp, bottom = 5.dp),
+                modifier = Modifier.padding(start = 50.dp, end = 50.dp, top = 5.dp, bottom = 5.dp),
                 text = "Join Room", style = TextStyle(
                     fontFamily = Fonts.InterFontFamily,
                     fontSize = 30.sp,

@@ -29,43 +29,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.input.key.Key.Companion.R
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.res.loadXmlImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import data.network.ChatServer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.xml.sax.InputSource
-import utils.Avatars
-import utils.Colors
-import utils.Fonts
-import utils.ImagePath
+import org.koin.java.KoinJavaComponent
+import presentation.ui.nav.Screens
+import presentation.viewmodel.ChatViewModel
+import utils.*
 import java.io.File
-import java.io.IOException
-import java.net.URL
 
 @Composable
 fun ProfileView(
     navController: NavController
 ) {
+    val coroutineScope = rememberCoroutineScope()
 
-    var name by remember {
+    var userName by remember {
         mutableStateOf("")
     }
 
-    val avatars = Avatars.getAvatarList()
+    var selectedAvatar by remember {
+        mutableStateOf(1)
+    }
+
+    val avatars = Avatars.avatarList()
 
     Scaffold(
         topBar = {
@@ -118,9 +113,9 @@ fun ProfileView(
                     )
             ) {
                 OutlinedTextField(
-                    value = name,
+                    value = userName,
                     onValueChange = {
-                        name = it
+                        userName = it
 
                     },
                     placeholder = {
@@ -193,6 +188,33 @@ fun ProfileView(
                 modifier = Modifier
                     .padding(bottom = 15.dp),
                 onClick = {
+                    if (userName.isNotEmpty()) {
+//                        CurrentUser.name = userName
+//                        coroutineScope.launch {
+//                            val chatServer=ChatServer(8080, "Test Room")
+//                            chatServer.start()
+//
+//                            ViewModelProvider.ChatViewModel = KoinJavaComponent.get(ChatViewModel::class.java)
+//                            ViewModelProvider.ChatViewModel.setUpViewModel(
+//                                "localhost",
+//                                8080
+//                            )
+//                            navController.navigate(Screens.Chat.route)
+//                        }
+
+                        CurrentUser.name = userName
+                        coroutineScope.launch(Dispatchers.IO) {
+                            val chatServer = ChatServer(8080, "Test Room")
+                            chatServer.start()
+                        }
+
+                        coroutineScope.launch(Dispatchers.IO) {
+                            ViewModelProvider.ChatViewModel = KoinJavaComponent.get(ChatViewModel::class.java)
+                            ViewModelProvider.ChatViewModel.setUpViewModel("localhost", 8080)
+
+                            navController.navigate(Screens.Chat.route)
+                        }
+                    }
 
                 },
                 colors = ButtonDefaults.buttonColors(

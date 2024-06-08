@@ -23,6 +23,16 @@ dependencies {
     implementation("org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
 
+    // Koin for Kotlin
+    implementation("io.insert-koin:koin-core:3.4.0")
+//    implementation("io.insert-koin:koin-core-ext:3.2.0")
+
+    // Koin for Compose
+//    implementation("io.insert-koin:koin-compose:3.2.0")
+
+    // Koin for testing (optional)
+    testImplementation("io.insert-koin:koin-test:3.2.0")
+
     implementation(compose.desktop.currentOs)
 }
 

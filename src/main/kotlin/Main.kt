@@ -10,8 +10,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.navigation.compose.rememberNavController
+import di.repositoryModule
+import di.viewModelModule
 import presentation.ui.nav.RootNavController
+import org.koin.core.context.startKoin
+import presentation.viewmodel.ChatViewModel
 
+
+import org.koin.java.KoinJavaComponent.get
 @Composable
 @Preview
 fun App() {
@@ -29,6 +35,10 @@ fun App() {
 }
 
 fun main() = application {
+    startKoin {
+        modules(repositoryModule, viewModelModule)
+    }
+
     Window(onCloseRequest = ::exitApplication) {
         App()
     }
