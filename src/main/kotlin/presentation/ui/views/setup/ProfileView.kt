@@ -1,4 +1,4 @@
-package presentation.ui.views
+package presentation.ui.views.setup
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,7 +39,6 @@ import androidx.navigation.NavController
 import data.network.ChatServer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.java.KoinJavaComponent
 import presentation.ui.nav.Screens
 import presentation.viewmodel.ChatViewModel

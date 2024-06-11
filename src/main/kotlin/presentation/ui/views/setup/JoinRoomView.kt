@@ -1,4 +1,4 @@
-package presentation.ui.views
+package presentation.ui.views.setup
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,11 +18,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -33,20 +29,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent
 import presentation.ui.nav.Screens
+import presentation.viewmodel.ChatViewModel
 import utils.Colors
 import utils.CurrentUser
 import utils.Fonts
+import utils.ViewModelProvider
 
 @Composable
-fun CreateRoomView(
+fun JoinRoomView(
     navController: NavController,
-    onJoinRoomButtonClick: () -> Unit
+    onStartRoomClick: () -> Unit
 ) {
-
-    var roomName by remember {
+    var roomID by remember {
         mutableStateOf("")
     }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -56,7 +58,7 @@ fun CreateRoomView(
         Text(
             modifier = Modifier
                 .padding(bottom = 25.dp),
-            text = "Create Room", style = TextStyle(
+            text = "Join Room", style = TextStyle(
                 fontFamily = Fonts.EloquiaFontFamily,
                 fontSize = 100.sp,
                 color = Colors.SapphireBlue,
@@ -79,13 +81,14 @@ fun CreateRoomView(
                 )
         ) {
             OutlinedTextField(
-                value = roomName,
+                value = roomID,
                 onValueChange = {
-                    roomName = it
+                    roomID = it
+
                 },
                 placeholder = {
                     Text(
-                        "enter room name", style = TextStyle(
+                        "enter room id", style = TextStyle(
                             fontWeight = FontWeight.Light,
                             fontSize = 25.sp,
                             textAlign = TextAlign.Start,
@@ -120,9 +123,13 @@ fun CreateRoomView(
             modifier = Modifier
                 .padding(bottom = 15.dp),
             onClick = {
-                if (roomName.isNotEmpty()) {
-                    CurrentUser.roomName = roomName
-                    navController.navigate(Screens.Profile.route)
+                CurrentUser.name="Aarsh"
+                CurrentUser.roomName="Room"
+                coroutineScope.launch(Dispatchers.IO) {
+                    ViewModelProvider.ChatViewModel = KoinJavaComponent.get(ChatViewModel::class.java)
+                    ViewModelProvider.ChatViewModel.setUpViewModel("localhost", 8080)
+
+                    navController.navigate(Screens.Chat.route)
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -132,7 +139,7 @@ fun CreateRoomView(
         ) {
             Text(
                 modifier = Modifier.padding(start = 50.dp, end = 50.dp, top = 5.dp, bottom = 5.dp),
-                text = "Create", style = TextStyle(
+                text = "Join", style = TextStyle(
                     fontFamily = Fonts.InterFontFamily,
                     fontSize = 30.sp,
                     color = Color.White,
@@ -168,7 +175,7 @@ fun CreateRoomView(
                 .padding(bottom = 15.dp)
                 .border(1.dp, Colors.DarkBlue, RoundedCornerShape(23.dp)),
             onClick = {
-                onJoinRoomButtonClick()
+                onStartRoomClick()
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.White
@@ -177,7 +184,7 @@ fun CreateRoomView(
         ) {
             Text(
                 modifier = Modifier.padding(start = 50.dp, end = 50.dp, top = 5.dp, bottom = 5.dp),
-                text = "Join Room", style = TextStyle(
+                text = "Create Room", style = TextStyle(
                     fontFamily = Fonts.InterFontFamily,
                     fontSize = 30.sp,
                     color = Colors.DarkBlue,

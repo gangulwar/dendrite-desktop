@@ -4,10 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import presentation.ui.MainChatView
-import presentation.ui.views.JoinRoomView
-import presentation.ui.views.ProfileView
-import presentation.ui.views.RoomOptionsView
+import presentation.ui.views.chat.MainChatView
+import presentation.ui.views.setup.ProfileView
+import presentation.ui.views.setup.RoomOptionsView
 
 enum class Screens(val route: String) {
     StartRoom("START_ROOM_SCREEN"),

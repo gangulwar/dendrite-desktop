@@ -8,4 +8,5 @@ object Colors {
     val SenderMessage = Color(0, 122, 255)
     val ReceiverMessage = Color(242, 242, 247)
     val Gray = Color(217, 217, 217)
+    val SendMessageTextField= Color(233,233,233)
 }

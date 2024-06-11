@@ -1,14 +1,14 @@
-package presentation.ui
+package presentation.ui.views.chat
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import utils.Avatars
 import utils.Colors
 import utils.Fonts
+import utils.ImagePath
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -66,21 +67,30 @@ fun MainChatViewPreview() {
                 Scaffold(
                     topBar = {
                         TopAppBar(
+                            modifier = Modifier.border(
+                                (0.5).dp, Color.Black
+                            ),
+                            elevation = 0.dp,
+                            contentColor = Color.Transparent,
                             backgroundColor = Color.Transparent
                         ) {
-                            Text(
-                                text = "Room Name", style = TextStyle(
-                                    fontFamily = Fonts.EloquiaFontFamily,
-                                    fontSize = 30.sp,
-                                    color = Color.Black,
-                                    fontWeight = FontWeight.Bold
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Room Name", style = TextStyle(
+                                        fontFamily = Fonts.EloquiaFontFamily,
+                                        fontSize = 30.sp,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 )
-                            )
+                            }
                         }
                     },
                     bottomBar = {
-                        BottomAppBar(){}
-                        
+                        MessageInputField()
                     }
                 ) { it ->
 
@@ -248,7 +258,7 @@ fun ReceiverView(
             ),
             contentDescription = "Avatar",
             modifier = Modifier.size(50.dp)
-                .padding(start = 10.dp,end = 5.dp)
+                .padding(start = 10.dp, end = 5.dp)
         )
 
         Box(
