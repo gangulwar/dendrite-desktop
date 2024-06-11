@@ -18,6 +18,8 @@ import presentation.viewmodel.ChatViewModel
 
 
 import org.koin.java.KoinJavaComponent.get
+import presentation.ui.MainChatViewPreview
+
 @Composable
 @Preview
 fun App() {
@@ -40,6 +42,7 @@ fun main() = application {
     }
 
     Window(onCloseRequest = ::exitApplication) {
-        App()
+//        App()
+        MainChatViewPreview()
     }
 }

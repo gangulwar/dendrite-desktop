@@ -15,7 +15,9 @@ data class User(val name: String, val avatar: String)
 
 enum class ChatMessageType {
     SENT,
-    RECEIVED
+    RECEIVED,
+    JOINED,
+    LEAVED
 }
 
 
