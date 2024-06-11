@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import data.network.ChatServer
+import di.MyKoinComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
@@ -115,7 +116,6 @@ fun ProfileView(
                     value = userName,
                     onValueChange = {
                         userName = it
-
                     },
                     placeholder = {
                         Text(
@@ -203,14 +203,14 @@ fun ProfileView(
 
                         CurrentUser.name = userName
                         coroutineScope.launch(Dispatchers.IO) {
-                            val chatServer = ChatServer(8080, "Test Room")
+                            val chatServer = ChatServer(8080, CurrentUser.roomName)
                             chatServer.start()
                         }
 
                         coroutineScope.launch(Dispatchers.IO) {
-                            ViewModelProvider.ChatViewModel = KoinJavaComponent.get(ChatViewModel::class.java)
-                            ViewModelProvider.ChatViewModel.setUpViewModel("localhost", 8080)
-
+//                            ViewModelProvider.ChatViewModel = KoinJavaComponent.get(ChatViewModel::class.java)
+//                            ViewModelProvider.ChatViewModel.setUpViewModel("localhost", 8080)
+                            MyKoinComponent().chatViewModel.setUpViewModel("localhost", 8080)
                             navController.navigate(Screens.Chat.route)
                         }
                     }

@@ -33,7 +33,7 @@ fun main() = application {
     }
 
     Window(onCloseRequest = ::exitApplication) {
-//        App()
-        MainChatViewPreview()
+        App()
+//        MainChatViewPreview()
     }
 }

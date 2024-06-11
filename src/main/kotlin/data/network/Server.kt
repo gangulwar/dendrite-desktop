@@ -13,7 +13,7 @@ class ChatServer(private val port: Int, roomName: String) {
     private val clients = CopyOnWriteArrayList<ClientHandler>()
     private val serverSocket = ServerSocket(port)
     private val roomName: String = roomName
-    private var nameToAvatar: List<User> = emptyList()
+    private var nameToAvatar: List<Pair<User, ClientHandler>> = emptyList()
 
     fun start() {
         println("Server started on port $port")
@@ -72,6 +72,7 @@ class ChatServer(private val port: Int, roomName: String) {
             } finally {
                 server.removeClient(this)
                 socket.close()
+                nameToAvatar = nameToAvatar.filterNot { it.second == this }
             }
         }
 
@@ -88,17 +89,19 @@ class ChatServer(private val port: Int, roomName: String) {
                 ).toBytes()
             )
 
-            nameToAvatar += User(
-                username!!,
-                chatMessage.message
+            nameToAvatar += Pair(
+                User(
+                    username!!,
+                    chatMessage.message
+                ), this
             )
 
             nameToAvatar.forEachIndexed { _, user ->
                 sendMessage(
                     ChatMessage(
                         MessageType.JOINED,
-                        user.name,
-                        user.avatar
+                        user.first.name,
+                        user.first.avatar
                     ).toBytes()
                 )
             }

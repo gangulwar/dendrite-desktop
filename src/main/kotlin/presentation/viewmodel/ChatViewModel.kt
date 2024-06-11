@@ -1,11 +1,9 @@
 package presentation.viewmodel
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import androidx.lifecycle.ViewModel
 import data.repository.Repository
-import kotlinx.coroutines.flow.Flow
+import di.MyKoinComponent
+import kotlinx.coroutines.flow.*
 import utils.CurrentUser
 import utils.ViewModelProvider
 import java.time.LocalDateTime
@@ -23,7 +21,8 @@ enum class ChatMessageType {
 
 class ChatViewModel(private val repository: Repository) : ViewModel() {
 
-    private var roomName: String = ""
+    private val _roomName = MutableStateFlow<String>("")
+    val roomName: StateFlow<String> = _roomName
 
     private val _chatsList = MutableStateFlow<List<Pair<Message, ChatMessageType>>>(emptyList())
     val chatsList: StateFlow<List<Pair<Message, ChatMessageType>>> = _chatsList
@@ -38,7 +37,7 @@ class ChatViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun setUpViewModel(ip: String, port: Int) {
-        repository.setViewModel(ViewModelProvider.ChatViewModel, ip, port, repository)
+        repository.setViewModel(MyKoinComponent().chatViewModel, ip, port, repository)
     }
 
     fun addMessage(message: Message) {
@@ -60,7 +59,7 @@ class ChatViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun setRoomName(name: String) {
-        roomName = name
+        _roomName.value = name
         CurrentUser.roomName = name
     }
 

@@ -27,11 +27,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import di.MyKoinComponent
+import presentation.viewmodel.ChatMessageType
 import presentation.viewmodel.User
-import utils.Avatars
+import utils.*
 import utils.Colors
-import utils.Fonts
-import utils.ImagePath
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -39,26 +39,116 @@ import java.time.format.DateTimeFormatter
 @Composable
 @Preview
 fun MainChatView(navController: NavController) {
-//    val connectedUsersCount by ViewModelProvider.ChatViewModel.connectedUsersCount.collectAsState(initial = 0)
-//    val chatList by ViewModelProvider.ChatViewModel.chatsList.collectAsState()
+
+    val koinComponent = remember { MyKoinComponent() }
+
+    val chatList by koinComponent.chatViewModel.chatsList.collectAsState()
+
+    val roomName by koinComponent.chatViewModel.roomName.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Row {
             Column(
-                modifier = Modifier.fillMaxWidth(0.6f)
+                modifier = Modifier.fillMaxWidth(0.8f)
+                    .fillMaxHeight()
             ) {
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            modifier = Modifier.border(
+                                (0.5).dp, Color.Black
+                            ),
+                            elevation = 0.dp,
+                            contentColor = Color.Transparent,
+                            backgroundColor = Color.Transparent
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = roomName, style = TextStyle(
+                                        fontFamily = Fonts.EloquiaFontFamily,
+                                        fontSize = 30.sp,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                            }
+                        }
+                    },
+                    bottomBar = {
+                        MessageInputField()
+                    }
+                ) { it ->
 
+                    LazyColumn (
+                        modifier = Modifier.padding(it.calculateTopPadding())
+                            .fillMaxWidth()
+                            .drawRightBorder(0.5.dp, Color.Black, LocalDensity.current)
+                    ){
+                        items(chatList){
+                            when(it.second){
+                                ChatMessageType.SENT -> {
+                                    AnotherSenderView(
+                                        it.first.message,
+                                        LocalDateTime.now()
+                                    )
+                                }
+
+                                ChatMessageType.RECEIVED -> {
+                                    ReceiverView(
+                                        it.first.sender.name,
+                                        it.first.sender.avatar,
+                                        it.first.message,
+                                        it.first.time,
+                                    )
+                                }
+
+                                ChatMessageType.JOINED -> TODO()
+                                ChatMessageType.LEAVED -> TODO()
+                            }
+                        }
+                    }
+                    /*
+//                    Column(
+//                        modifier = Modifier.padding(it.calculateTopPadding())
+//                            .fillMaxWidth()
+//                            .drawRightBorder(0.5.dp, Color.Black, LocalDensity.current)
+//                    ) {
+//                        AnotherSenderView("Hello Guys!!!", LocalDateTime.now())
+//                        ReceiverView("Dave", Avatars.avatarList[0], "Hi Guys", LocalDateTime.now())
+//                        AnotherSenderView("Hello Guys!!!", LocalDateTime.now())
+//                        ReceiverView("Dave", Avatars.avatarList[0], "Hi Guys", LocalDateTime.now())
+//                        AnotherSenderView("Hello Guys!!!", LocalDateTime.now())
+//                        ReceiverView("Dave", Avatars.avatarList[0], "Hi Guys", LocalDateTime.now())
+//                        AnotherSenderView(
+//                            "I am fine guys what about and and what's " +
+//                                    "happing around I am fine guys what about and " +
+//                                    "and what's happing around ys what about and hello",
+//                            LocalDateTime.now()
+//                        )
+//
+//                    }
+*/
+
+                }
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth(0.6f)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-
+                RoomDetailsView()
             }
         }
     }
+
 }
 
 
@@ -138,7 +228,6 @@ fun MainChatViewPreview() {
         }
     }
 }
-
 
 
 @Composable

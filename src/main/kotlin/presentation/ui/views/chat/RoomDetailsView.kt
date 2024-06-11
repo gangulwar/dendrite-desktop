@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import di.MyKoinComponent
 import presentation.ui.nav.Screens
 import presentation.viewmodel.User
 import utils.*
@@ -31,6 +32,12 @@ import java.io.File
 fun RoomDetailsView(
 
 ) {
+
+    val koinComponent = remember { MyKoinComponent() }
+
+    val connectedUsersCount by koinComponent.chatViewModel.connectedUsersCount.collectAsState(initial = 0)
+
+    val connectedUserList by koinComponent.chatViewModel.connectedUsers.collectAsState()
 
     var currentIndex by remember { mutableStateOf(0) }
     val maxUsersToShow = 5
@@ -42,7 +49,7 @@ fun RoomDetailsView(
         Image(
             painter = BitmapPainter(
                 loadImageBitmap(
-                    File(Avatars.avatarList[0]).inputStream()
+                    File(Avatars.avatarList[CurrentUser.avatar.toInt()]).inputStream()
                 )
             ),
             contentDescription = "User Avatar",
@@ -51,7 +58,7 @@ fun RoomDetailsView(
         )
 
         Text(
-            text = "Aarsh Gangulwar",
+            text = CurrentUser.name,
             style = TextStyle(
                 fontFamily = Fonts.InterFontFamily,
                 fontSize = 23.sp,
@@ -99,7 +106,7 @@ fun RoomDetailsView(
 
             Text(
                 modifier = Modifier.padding(start = 10.dp),
-                text = "23",
+                text = connectedUsersCount.toString(),
                 style = TextStyle(
                     fontFamily = Fonts.InterFontFamily,
                     fontSize = 25.sp,
@@ -117,7 +124,12 @@ fun RoomDetailsView(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(userList.subList(currentIndex, minOf(currentIndex + maxUsersToShow, userList.size))) { user ->
+        items(
+            connectedUserList.subList(
+                currentIndex,
+                minOf(currentIndex + maxUsersToShow, connectedUserList.size)
+            )
+        ) { user ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -166,7 +178,7 @@ fun RoomDetailsView(
             modifier = Modifier
                 .size(30.dp)
                 .clickable {
-                    if (currentIndex > 0) {
+                    if (currentIndex >= maxUsersToShow) {
                         currentIndex -= maxUsersToShow
                     }
                 }
@@ -182,7 +194,7 @@ fun RoomDetailsView(
             modifier = Modifier
                 .size(30.dp)
                 .clickable {
-                    if (currentIndex + maxUsersToShow < userList.size) {
+                    if (currentIndex + maxUsersToShow < connectedUserList.size) {
                         currentIndex += maxUsersToShow
                     }
                 }

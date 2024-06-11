@@ -29,8 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import di.MyKoinComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
 import org.koin.java.KoinJavaComponent
 import presentation.ui.nav.Screens
 import presentation.viewmodel.ChatViewModel
@@ -123,11 +125,12 @@ fun JoinRoomView(
             modifier = Modifier
                 .padding(bottom = 15.dp),
             onClick = {
-                CurrentUser.name="Aarsh"
-                CurrentUser.roomName="Room"
+                CurrentUser.name = "Aarsh"
+                CurrentUser.roomName = "Room"
                 coroutineScope.launch(Dispatchers.IO) {
-                    ViewModelProvider.ChatViewModel = KoinJavaComponent.get(ChatViewModel::class.java)
-                    ViewModelProvider.ChatViewModel.setUpViewModel("localhost", 8080)
+//                    ViewModelProvider.ChatViewModel = KoinJavaComponent.get(ChatViewModel::class.java)
+                    MyKoinComponent().chatViewModel
+                        .setUpViewModel("localhost", 8080)
 
                     navController.navigate(Screens.Chat.route)
                 }
