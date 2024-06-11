@@ -5,20 +5,29 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import presentation.viewmodel.User
 import utils.Avatars
 import utils.Colors
 import utils.Fonts
@@ -97,6 +106,7 @@ fun MainChatViewPreview() {
                     Column(
                         modifier = Modifier.padding(it.calculateTopPadding())
                             .fillMaxWidth()
+                            .drawRightBorder(0.5.dp, Color.Black, LocalDensity.current)
                     ) {
                         AnotherSenderView("Hello Guys!!!", LocalDateTime.now())
                         ReceiverView("Dave", Avatars.avatarList[0], "Hi Guys", LocalDateTime.now())
@@ -117,14 +127,34 @@ fun MainChatViewPreview() {
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth(0.2f)
-                    .fillMaxHeight()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-
+                RoomDetailsView()
             }
         }
     }
 }
+
+
+
+@Composable
+fun Modifier.drawRightBorder(width: Dp, color: Color, density: Density) = this.then(
+    Modifier.drawBehind {
+        val strokeWidth = with(density) { width.toPx() }
+        val strokeColor = color.toArgb()
+        drawLine(
+            color = color,
+            start = Offset(size.width - strokeWidth / 2, 0f),
+            end = Offset(size.width - strokeWidth / 2, size.height),
+            strokeWidth = strokeWidth
+        )
+    }
+)
+
 
 //@Preview
 //@Composable
