@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -46,6 +47,15 @@ fun MainChatView(navController: NavController) {
 
     val roomName by koinComponent.chatViewModel.roomName.collectAsState()
 
+    val scrollState = rememberLazyListState()
+
+    LaunchedEffect(chatList.size) {
+        // Scroll to the bottom whenever the chatList changes
+        if (chatList.isNotEmpty()) {
+            scrollState.animateScrollToItem(chatList.lastIndex)
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -80,17 +90,21 @@ fun MainChatView(navController: NavController) {
                         }
                     },
                     bottomBar = {
-                        MessageInputField()
+                        MessageInputField(koinComponent)
                     }
                 ) { it ->
 
-                    LazyColumn (
-                        modifier = Modifier.padding(it.calculateTopPadding())
+                    LazyColumn(
+                        modifier = Modifier.padding(
+                            top = it.calculateTopPadding(),
+                            bottom = it.calculateBottomPadding()
+                        )
                             .fillMaxWidth()
-                            .drawRightBorder(0.5.dp, Color.Black, LocalDensity.current)
-                    ){
-                        items(chatList){
-                            when(it.second){
+                            .drawRightBorder(0.5.dp, Color.Black, LocalDensity.current),
+                        state = scrollState
+                    ) {
+                        items(chatList) {
+                            when (it.second) {
                                 ChatMessageType.SENT -> {
                                     AnotherSenderView(
                                         it.first.message,
@@ -189,7 +203,7 @@ fun MainChatViewPreview() {
                         }
                     },
                     bottomBar = {
-                        MessageInputField()
+                        MessageInputField(MyKoinComponent())
                     }
                 ) { it ->
 

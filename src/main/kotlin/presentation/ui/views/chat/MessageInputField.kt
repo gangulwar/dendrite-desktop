@@ -107,7 +107,6 @@
 //}
 
 
-
 package presentation.ui.views.chat
 
 import androidx.compose.foundation.Image
@@ -122,19 +121,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import di.MyKoinComponent
 import utils.Colors
 import utils.Fonts
 import utils.ImagePath
 import java.io.File
 
 @Composable
-fun MessageInputField() {
+fun MessageInputField(
+    koinComponent: MyKoinComponent
+) {
     var message by remember {
         mutableStateOf("")
     }
@@ -172,7 +178,15 @@ fun MessageInputField() {
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 10.dp, vertical = 8.dp)
-                    .background(Color.Transparent),
+                    .background(Color.Transparent)
+                    .onKeyEvent {
+                        if (it.key == Key.Enter) {
+                            koinComponent.chatViewModel.sendMessage(message)
+                            message=""
+                            return@onKeyEvent true
+                        }
+                        false
+                    },
                 textStyle = TextStyle(
                     fontFamily = Fonts.EloquiaFontFamily,
                     fontSize = 20.sp,
