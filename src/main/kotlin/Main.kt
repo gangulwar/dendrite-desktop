@@ -1,7 +1,7 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
 import androidx.navigation.compose.rememberNavController
 import di.repositoryModule
 import di.viewModelModule
@@ -32,8 +32,15 @@ fun main() = application {
         modules(repositoryModule, viewModelModule)
     }
 
-    Window(onCloseRequest = ::exitApplication) {
+    val windowState = rememberWindowState()
+
+    windowState.placement = WindowPlacement.Maximized
+
+    Window(
+        onCloseRequest = ::exitApplication,
+        state = windowState,
+        title = "Dendrite"
+    ) {
         App()
-//        MainChatViewPreview()
     }
 }
